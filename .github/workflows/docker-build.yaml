@@ -6,12 +6,7 @@ on:
       - published
   push:
     branches:
-      - master
-      - lite
-      - v13
-      - v14
-      - v0.14
-      - v0.15
+      - "4"
 
 jobs:
   docker:
@@ -20,7 +15,9 @@ jobs:
       - name: Set up tags
         id: setup
         run: |
-          TAG_BASE="quay.io/ibmgaragecloud/cli-tools"
+          IMAGE_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -E 's/^image-//g')
+          
+          TAG_BASE="quay.io/ibmgaragecloud/${IMAGE_NAME}"
 
           BRANCH=${GITHUB_REF#refs/heads/}
           TAG="${{ github.event.release.tag_name }}"
@@ -30,7 +27,7 @@ jobs:
           else
             echo "Running against branch: ${BRANCH}"
             TAGS="${TAG_BASE}:${BRANCH}"
-            if [[ "${BRANCH}" == "v14" ]]; then
+            if [[ "${BRANCH}" == "4" ]]; then
               TAGS="${TAGS},${TAG_BASE}:latest"
             fi
           fi
